@@ -1,4 +1,6 @@
-![TermFunk Logo](https://raw.githubusercontent.com/smetj/termfunk/master/docs/_static/logo-readme.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/smetj/termfunk/master/docs/_static/logo-readme.png">
+</p>
 <h2 align="center">Python functions from the terminal.</h2>
 
 
@@ -19,7 +21,22 @@ The docstring of each version is exposed by issuing `--help`.
 
 ### Installation
 
-*TermFunk* needs Python3 and can be installed by running `pip install termfunk`
+*TermFunk* needs Python3 and can be installed by running:
+
+  `pip install termfunk`
+
+### Configuring Bash autocompletion
+
+TermFunk has support builtin to configure Bash autocompletion.
+
+Assuming you have saved your script to `/usr/local/bin/fnc`, add the following
+command to your `.bashrc` file:
+
+  `eval "$(/usr/share/bin/fnc complete)"`
+
+The `complete` command prints a Bash script to STDOUT which can be eval'ed to
+fully configure Bash completion for your defined functions and their
+parameters.
 
 ### Usage
 
@@ -30,7 +47,7 @@ TermFunk is a baseclass for the class you write containing your functions:
 
 from termfunk import TermFunk
 from termfunk import Ask
-import requests
+from termfunk import Choice
 
 
 class MyFunctions(TermFunk):
@@ -43,14 +60,18 @@ class MyFunctions(TermFunk):
             print("Hello World!")
 
     def function_parameterdemo(
-        self, url=Ask(), username=Ask(), password=Ask(secret=True)
+        self,
+        url=Ask(),
+        username=Ask(),
+        password=Ask(secret=True),
+        value=Choice(["a_one", "a_two", "b_three"]),
     ):
         """
         Demo access to parameters
         """
         print(
-            "I will request url '%s' with username '%s' and password '%s'."
-            % (url, username, password)
+            "I will request url '%s' with username '%s' and password '%s' using values '%s'."
+            % (url, username, password, value)
         )
 
 
@@ -61,8 +82,8 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 ```
+---
 
 After the script has been saved as "demo" and made executable is can be executed as such:
 
@@ -80,15 +101,7 @@ optional arguments:
 
 ```
 
-`list` is a default positional parameter listing all user defined functions.
-Usefull for autocomplete functionality.
-All the user defined functions prefixed with `function_` are available:
-
-```bash
-$ ./demo list
-greet
-parameterdemo
-```
+---
 
 Executing the function from your terminal is simple as:
 
@@ -105,6 +118,8 @@ Hello World!
 Hello World!
 Hello World!
 ```
+
+---
 
 Accessing help with information about the function and its parameters can be done using `--help`.
 Each parameter shows how it can retrieve information.
@@ -123,12 +138,16 @@ optional arguments:
   --password PASSWORD  : <$DEMO_PASSWORD> or <Interactive>
 ```
 
+---
+
 Parameters values can be provided during execution:
 
 ```bash
 $ ./demo parameterdemo --url http://hello --username john --password doe
 I will request url 'http://hello' with username 'john' and password 'doe'.
 ```
+
+---
 
 Parameter values can be set by environment variables.
 Each variable is in uppercase and is prefixed with the name of the script:
@@ -138,6 +157,8 @@ $ export DEMO_URL="http://some-place-in-the-clouds"
 $ ./demo parameterdemo --username john --password doe
 I will request url 'http://some-place-in-the-clouds' with username 'john' and password 'doe'.
 ```
+
+---
 
 If a parameter value is retrieved from an environment variable `--help` will tell you that:
 
@@ -154,7 +175,11 @@ optional arguments:
   --username USERNAME  : <$DEMO_USERNAME> or <Interactive>
   --password PASSWORD  : <$DEMO_PASSWORD> or <Interactive>
 ```
-If you define ```Actor(secret=True)``` TermFunk will obfuscate that value in the `--help` output:
+
+---
+
+If you define ```Ask(secret=True)``` TermFunk will obfuscate that value in the
+`--help` output:
 
 ```bash
 $ export DEMO_PASSWORD="some secret value"
@@ -171,8 +196,11 @@ optional arguments:
   --password PASSWORD  : <$DEMO_PASSWORD **********>
 ```
 
-If you don't define a parameter value on CLI then you can provide them interactively.
-Since all other parameters are know at this stage, only the unknown ones are asked for.
+---
+
+If you don't define a parameter value on CLI then you can provide them
+interactively. Since all other parameters are know at this stage, only the
+unknown ones are asked for.
 
 ```bash
 $ ./demo parameterdemo
@@ -180,9 +208,28 @@ Value for username: Happy Cat
 I will request url 'http://some-place-in-the-clouds' with username 'Happy Cat' and password 'some secret value'.
 ```
 
+---
+
+You can define a set of predefined parameter values which can be auto-
+completed using the `Choice()` type:
+
+```bash
+$ ./demo parameterdemo --value a_<tab>
+a_one a_two
+```
+
+---
 
 ## Change Log
 
-### 0.1.10
+### 0.2.0
+
+* Removed `list` command in favor of `complete`
+* Added `complete` command which returns a Bash completion config which can
+  be eval'ed.
+* Fixed bug where functions without a doc-string would break the script.
+* Added `Choice` type allowing you to auto-complete predetermined values.
+
+### 0.1.0
 
 * Initial commit.

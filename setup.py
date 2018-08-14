@@ -29,7 +29,7 @@ import sys
 PROJECT = "termfunk"
 VERSION = "0.1.0"
 
-install_requires = []
+install_requires = ["argcomplete"]
 
 dependency_links = []
 
