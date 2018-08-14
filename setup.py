@@ -27,7 +27,7 @@ from setuptools.command.test import test as TestCommand
 import sys
 
 PROJECT = "termfunk"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 install_requires = ["argcomplete"]
 
