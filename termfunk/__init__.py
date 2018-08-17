@@ -26,3 +26,4 @@ from .termfunk import TermFunk
 from .termfunk_types import Ask
 from .termfunk_types import EnvOrAsk
 from .termfunk_types import Choice
+from .termfunk_types import File

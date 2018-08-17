@@ -48,6 +48,7 @@ TermFunk is a baseclass for the class you write containing your functions:
 from termfunk import TermFunk
 from termfunk import Ask
 from termfunk import Choice
+from termfunk import File
 
 
 class MyFunctions(TermFunk):
@@ -73,6 +74,15 @@ class MyFunctions(TermFunk):
             "I will request url '%s' with username '%s' and password '%s' using values '%s'."
             % (url, username, password, value)
         )
+
+    def function_validate(
+        self,
+        file=File(),
+    ):
+        """
+        Validates file
+        """
+        print("I will validate file %s" % (file))
 
 
 def main():
@@ -220,7 +230,20 @@ a_one a_two
 
 ---
 
+File completion can be triggerd by assigning the `File()` to the desired parameter.
+
+```bash
+$ ./demo validate --name <tab>
+demo .git .gitignore setup.py
+```
+
+---
+
 ## Change Log
+
+### 0.3.0
+
+* Added type `File()` offering file completion.
 
 ### 0.2.0
 

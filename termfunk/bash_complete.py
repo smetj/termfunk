@@ -43,8 +43,13 @@ _termfunk_{{ script_name }}_complete()
         {%- if function_map[function][var]|ischoice %}
   elif [ $command == "{{ function }}" ] && [ $prev == "{{ var }}" ]; then
       COMPREPLY=( $(compgen -W '{{ " ".join(function_map[function][var]) }}' -- $cur) )
+        {%- elif function_map[function][var]|isfile %}
+  elif [ $command == "{{ function }}" ] && [ $prev == "{{ var }}" ]; then
+      compopt -o filenames
+      COMPREPLY=( $( compgen -A file -- "$cur" ) )
+      return 0
         {%- endif %}
-      {%- endfor %}
+  {%- endfor %}
   elif [ $command == "{{ function }}" ]; then
     COMPREPLY=( $(compgen -W '{{ " ".join(vars.keys()) }}' -- $cur) )
     return 0

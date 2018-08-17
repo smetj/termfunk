@@ -27,6 +27,15 @@ import sys
 import getpass
 
 
+class File(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+
+        return "<File>"
+
+
 class Choice(object):
     def __init__(self, items=[]):
 
