@@ -25,6 +25,7 @@
 from .termfunk_types import Choice
 from .termfunk_types import Ask
 from .termfunk_types import EnvOrAsk
+from .termfunk_types import File
 from .helpformatter import ArgumentDefaultsHelpFormatter
 from .bash_complete import BASH_COMPLETE
 
@@ -48,7 +49,10 @@ class TermFunk(object):
         subparsers.required = True
 
         # Add the "complete" function as a function
-        subparsers.add_parser("complete", description="Lists all available functions.")
+        subparsers.add_parser(
+            "complete",
+            description="Print a Bash script to STDOUT to configure auto completion.",
+        )
 
         # Add the user defined functions a subparsers
         self.__addUserFunctionsAsSubparsers(subparsers)
@@ -147,6 +151,7 @@ class TermFunk(object):
         complete_map = self.__getCompleteMap()
         env = jinja2.Environment()
         env.filters["ischoice"] = self.__isChoice
+        env.filters["isfile"] = self.__isFile
         print(
             env.from_string(BASH_COMPLETE).render(
                 script_name=self.__getScriptName(), function_map=complete_map
@@ -164,14 +169,6 @@ class TermFunk(object):
                 complete_map[function[9:]].update(
                     {"--%s" % (var_name): var_value.default}
                 )
-                # if var_value.default != inspect._empty and isinstance(
-                #     var_value.default, list
-                # ):
-                #     complete_map[function[9:]].update(
-                #         {"--%s" % (var_name): var_value.default}
-                #     )
-                # else:
-                #     complete_map[function[9:]].update({"--%s" % (var_name): {}})
         return complete_map
 
     def __getScriptName(self):
@@ -180,3 +177,6 @@ class TermFunk(object):
 
     def __isChoice(self, value):
         return isinstance(value, Choice)
+
+    def __isFile(self, value):
+        return isinstance(value, File)
